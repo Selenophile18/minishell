@@ -1,33 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/15 15:10:09 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/02/16 15:10:18 by hhattaki         ###   ########.fr       */
+/*   Created: 2023/02/14 18:17:03 by hhattaki          #+#    #+#             */
+/*   Updated: 2023/02/14 18:19:14 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-#include <fcntl.h>
+#include "../minishell.h"
 
-int	main(int ac, char **av, char **env)
+int	env(t_env	*envp)
 {
-	// t_cmd	d;
+	t_env	*temp;
 
-	(void)ac;
-	(void)av;
-	(void)env;
-	// d.in = 0;
-	// d.out = 1;
-	// d.cmd = av[1];
-	// d.next = 0;
-	// check(d, env);
-	// printf("%d\n", i);
-	// dup2(i, 1);
-	// printf("test");
-	ft_dprintf("%s: gjgksfbkj\n", "hajar");
-	printf("%s: gjgksfbkj\n", "hajar2");
+	temp = envp;
+	while (temp)
+	{
+		printf("%s=%s\n", temp->key, envp->value);
+		temp = temp->next;
+	}
+	return (0);
 }

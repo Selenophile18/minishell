@@ -1,33 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   builtins2.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/15 15:10:09 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/02/16 15:10:18 by hhattaki         ###   ########.fr       */
+/*   Created: 2023/02/11 21:59:21 by hhattaki          #+#    #+#             */
+/*   Updated: 2023/02/14 16:13:38 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-#include <fcntl.h>
+#include "../minishell.h"
 
-int	main(int ac, char **av, char **env)
+void	unset(char **key, t_env	*env_vars)
 {
-	// t_cmd	d;
+	t_env	*temp;
+	t_env	*hold;
+	int		i;
 
-	(void)ac;
-	(void)av;
-	(void)env;
-	// d.in = 0;
-	// d.out = 1;
-	// d.cmd = av[1];
-	// d.next = 0;
-	// check(d, env);
-	// printf("%d\n", i);
-	// dup2(i, 1);
-	// printf("test");
-	ft_dprintf("%s: gjgksfbkj\n", "hajar");
-	printf("%s: gjgksfbkj\n", "hajar2");
+	i = 0;
+	hold = env_vars;
+	while (key[i])
+	{
+		while (env_vars)
+		{
+			if (!ft_strncmp(env_vars->next->key, key[i], 0))
+			{
+				temp = env_vars->next;
+				env_vars->next = temp->next;
+				free_env(temp);
+				break ;
+			}
+			env_vars = env_vars->next;
+		}
+		env_vars = hold;
+		i++;
+	}
 }

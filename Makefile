@@ -1,8 +1,8 @@
-SRCS	= $(wildcard *.c)
+SRCS	= $(wildcard ./builtins/*.c) $(wildcard ./execution/*.c) main.c
 
 CC		= cc
 
-CFLAGS	= -Wall -Wextra -Werror -g -fsanitize=address
+CFLAGS	= -Wall -Wextra -Werror
 
 NAME	= minishell
 
@@ -16,7 +16,8 @@ $(NAME) : $(SRCS) $(MK_FILE)
 		make -C libft
 		$(CC) $(CFLAGS) $(SRCS) $(LIBFT) -o $(NAME)
 
-clean	: make clean -C libft
+clean	:
+		make clean -C libft
 
 fclean	: rm -rf $(NAME)
 
