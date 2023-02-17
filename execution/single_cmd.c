@@ -6,7 +6,7 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 23:14:54 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/02/16 18:12:27 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/02/17 23:38:51 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ char	*check_path(char	**path, char	**utils)
 	return (temp);
 }
 
-void	single_cmd(t_cmd cmd, char **utils, char **env)
+void	single_cmd(t_cmd *cmd, char **utils, char **env)
 {
 	char	**path;
 	char	*temp;
@@ -68,6 +68,6 @@ void	single_cmd(t_cmd cmd, char **utils, char **env)
 	}
 	temp = check_path(path, utils);
 	free_strs(path);
-	fd(cmd);
+	fd(*cmd);
 	execve(temp, utils, env);
 }

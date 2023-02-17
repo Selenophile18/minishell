@@ -1,38 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   multiple_cmds_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/15 15:10:09 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/02/17 23:58:15 by hhattaki         ###   ########.fr       */
+/*   Created: 2023/02/17 19:37:34 by hhattaki          #+#    #+#             */
+/*   Updated: 2023/02/18 00:39:21 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-#include <fcntl.h>
+#include "../minishell.h"
 
-int	main(int ac, char **av, char **env)
+void	cmd_checker(t_pipe p, t_cmd cmd, int i)
 {
-	t_cmd	d;
-	t_cmd	c;
-
-	(void)ac;
-	// (void)av;
-	// (void)env;
-	d.in = 0;
-	// d.out = 1;
-	d.cmd = av[1];
-	d.next = &c;
-	c.out = 1;
-	c.cmd = av[2];
-	c.next = 0;
-	// check(d, env);
-	// printf("%d\n", i);
-	// dup2(i, 1);
-	// printf("test");
-	// check(&d, env);
-	multiple_cmds(2, &d, env);
-	// system("leaks minishell");
+	if (i % 2 == 0)
+	{
+		if (cmd.next)
+			even_child(i, cmd.in, cmd.out, p);
+		else
+			even_child(-1, cmd.in, cmd.out, p);
+	}
+	else
+	{
+		if (!cmd.next)
+			odd_child(-1, cmd.out, p);
+		else
+			odd_child(i, cmd.out, p);
+	}	
 }

@@ -6,7 +6,7 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 22:21:01 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/02/15 19:39:22 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/02/17 23:36:08 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,22 +45,29 @@ void	call_builtin(t_env *env_var, char **b_in)
 		env(env_var);
 }
 
-void	check(t_cmd cmd, char **env)
+void	check(t_cmd *cmd, char **env)
 {
 	char	**cmd_split;
 	char	*temp;
+	int		i;
 
-	cmd_split = ft_split(cmd.cmd, 32);
+	cmd_split = ft_split(cmd->cmd, 32);
 	temp = cmd_split[0];
 	cmd_split[0] = ft_strjoin("/", temp);
-	if (!cmd.next)
+	i = 0;
+	if (!cmd->next)
 		single_cmd(cmd, cmd_split, env);
-	// else
-	// {
-	// 	while (cmd.cmd)
-	// 	{
-	// 		if (is_builtin(cmd_split[0]))
-	// 			call_builtin(env, cmd_split);
-	// 	}
-	// }
+	else
+	{
+		while (cmd)
+		{
+			if (is_builtin(cmd_split[0]))
+				// call_builtin(env, cmd_split);
+				printf("1");
+			else
+				multiple_cmds(i, cmd, env);
+			i++;
+			cmd = cmd->next;
+		}
+	}
 }

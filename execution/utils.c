@@ -6,7 +6,7 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/12 19:21:49 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/02/16 16:24:07 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/02/17 21:22:23 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,9 @@ void	ft_dprintf(char *format, char *str)
 	int	temp;
 
 	temp = dup(1);
-	int i = open("out1", O_RDWR, 0644);
 	printf("");
-	dup2(i, 1);
+	dup2(2, 1);
 	printf(format, str);
-	close(i);
 	dup2(temp, 1);
 	close(temp);
 }
