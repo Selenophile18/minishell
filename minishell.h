@@ -6,7 +6,7 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/10 15:05:31 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/02/17 21:28:42 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/02/21 18:47:11 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ int		env(t_env *envp);
 int		cd(char *path);
 int		echo(char **av);
 void	unset(char **key, t_env	*env_vars);
-// void	ft_exit(unsigned char n);
+int		export(t_env **env, char	*add);
 
 /*----------utils----------*/
 void	free_env(t_env *env);
@@ -72,7 +72,7 @@ void	single_cmd(t_cmd *cmd, char **utils, char **env); //temp
 
 /*-----multiple_command----*/
 void	even_child(int i, int in, int out, t_pipe p);
-void	odd_child(int i, int out, t_pipe p);
+void	odd_child(int i, int in, int out, t_pipe p);
 void	cmd_checker(t_pipe p, t_cmd cmd, int i);
 void	multiple_cmds(int count, t_cmd *cmd, char **env);
 

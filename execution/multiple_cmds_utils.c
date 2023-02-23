@@ -6,7 +6,7 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 19:37:34 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/02/18 00:39:21 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/02/20 19:15:32 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,11 @@ void	cmd_checker(t_pipe p, t_cmd cmd, int i)
 	else
 	{
 		if (!cmd.next)
-			odd_child(-1, cmd.out, p);
+		{
+			// printf("here\n");
+			odd_child(-1, cmd.in, cmd.out, p);
+		}
 		else
-			odd_child(i, cmd.out, p);
-	}	
+			odd_child(i, cmd.in, cmd.out, p);
+	}
 }

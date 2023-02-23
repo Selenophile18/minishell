@@ -6,7 +6,7 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 22:21:01 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/02/17 23:36:08 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/02/20 09:55:22 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,10 @@ void	check(t_cmd *cmd, char **env)
 				// call_builtin(env, cmd_split);
 				printf("1");
 			else
+			{
+				// printf("[%p]", cmd->cmd);
 				multiple_cmds(i, cmd, env);
+			}
 			i++;
 			cmd = cmd->next;
 		}
