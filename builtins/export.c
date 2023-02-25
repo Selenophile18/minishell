@@ -6,7 +6,7 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 15:07:19 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/02/23 22:22:46 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/02/24 15:05:54 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,11 +43,12 @@ void	env_var(char *add, t_env **env, int r, t_env *new)
 		ft_dprintf("export: `%s': not a valid identifier", add);
 	else
 	{
+		temp = (*env);
 		while (temp)
 		{
-			if (!ft_strncmp(ft_substr(add, 0, r + 1), temp->key, 0));
+			if (!ft_strncmp(ft_substr(add, 0, r + 1), temp->key, 0))
 			{
-				temp->value = ft_strjoin(temp->next, ft_substr(add, 0, r + 1));
+				temp->value = ft_strjoin(temp->value, ft_substr(add, 0, r + 1));
 				break ;
 			}
 			temp = temp->next;
@@ -129,6 +130,7 @@ int	export(t_env **env, char **add)
 		check_arg(add[i], env, &exp);
 		i++;
 	}
+	return (0);
 	// t_env	*iter;
 
 	

@@ -6,7 +6,7 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 23:14:54 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/02/17 23:38:51 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/02/24 23:05:15 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,16 +30,18 @@ char	*check_path(char	**path, char	**utils)
 {
 	int	i;
 	char	*temp;
+	char	*c;
 
 	i = 0;
+	c = ft_strjoin("/", utils[0]);
 	while (path[i])
 	{
-		if (!access(utils[0], F_OK && X_OK))
+		if (!access(c, F_OK && X_OK))
 		{
 			temp = utils[0];
 			break ;
 		}
-		temp = ft_strjoin(path[i], utils[0]);
+		temp = ft_strjoin(path[i], c);
 		if (!access(temp, F_OK && X_OK))
 			break ;
 		free (temp);
@@ -53,7 +55,7 @@ char	*check_path(char	**path, char	**utils)
 	return (temp);
 }
 
-void	single_cmd(t_cmd *cmd, char **utils, char **env)
+void	single_cmd(t_cmd *cmd, char **env)
 {
 	char	**path;
 	char	*temp;
@@ -63,11 +65,11 @@ void	single_cmd(t_cmd *cmd, char **utils, char **env)
 	i = 0;
 	if (!path[0])
 	{
-		ft_dprintf("%s: No such file or directory", utils[0]);
+		ft_dprintf("%s: No such file or directory", cmd->arg[0]);
 		return ;
 	}
-	temp = check_path(path, utils);
+	temp = check_path(path, cmd->arg);
 	free_strs(path);
 	fd(*cmd);
-	execve(temp, utils, env);
+	execve(temp, cmd->arg, env);
 }

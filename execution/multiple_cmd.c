@@ -6,7 +6,7 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 17:05:18 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/02/21 15:05:32 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/02/25 18:53:54 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,13 +73,8 @@ void	even_child(int i, int in, int out, t_pipe p)
 int	ft_wait(int *id, int i)
 {
 	int	status;
-	int	n;
-	int	st;
 
-	n = waitpid(id[i], &status, 0);
-	while (n != -1)
-		n = waitpid(-1, &st, 0);
-	printf("LOL\n");
+	waitpid(id[i], &status, 0);
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
 	return (1);
@@ -88,24 +83,21 @@ int	ft_wait(int *id, int i)
 void	child_process(t_cmd cmd, char **env, int i, t_pipe p)
 {
 	char	**path;
-	char	**utils;
 	char	*temp;
 	// int		j;
 
 	// printf("%s %d\n", cmd.cmd, i);
 	cmd_checker(p, cmd, i);
 	path = ft_split(find_path(env), ':');
-	utils = ft_split(cmd.cmd, 32);
-	temp = utils[0];
-	utils[0] = ft_strjoin("/", temp);
+	// temp = ft_strjoin("/", cmd.arg[0]);
 	if (!path[0])
 	{
-		ft_dprintf("%s: No such file or directory", utils[0]);
+		ft_dprintf("%s: No such file or directory", cmd.arg[0]);
 		return ;
 	}
-	temp = check_path(path, utils);
+	temp = check_path(path, cmd.arg);
 	free_strs(path);
-	execve(temp, utils, env);
+	execve(temp, cmd.arg, env);
 }
 
 void	multiple_cmds(int count, t_cmd *cmd, char **env)
@@ -130,4 +122,9 @@ void	multiple_cmds(int count, t_cmd *cmd, char **env)
 	close(p.p2[0]);
 	close(p.p2[1]);
 	ft_wait(id, i);
+	while (--i >= 0)
+	{
+		dprintf(2, "here id %d, i %d\n", id[i], i);
+		waitpid(id[i], NULL, 0);
+	}
 }

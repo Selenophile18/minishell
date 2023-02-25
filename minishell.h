@@ -6,7 +6,7 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/10 15:05:31 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/02/21 18:47:11 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/02/25 18:48:18 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,13 @@ typedef struct s_env
 
 typedef struct s_cmd
 {
-	char			*cmd;
-	int				in;
-	int				out;
+	// char			*cmd;
+	char			**arg;
+	int			in;
+	int			out;
+	char			*append;
+	char			*herdoc;
+	char			*pipe;
 	struct s_cmd	*next;
 }	t_cmd;
 
@@ -45,15 +49,14 @@ typedef struct s_pipe
 	int	p2[2];
 }	t_pipe;
 
-
 /*---------builtins---------*/
 int		pwd(void);
 int		env(t_env *envp);
 /// handle cd no arg and with ~ take to home, cd - previous path 
-int		cd(char *path);
+int		cd(t_cmd cmd, t_env **env);
 int		echo(char **av);
 void	unset(char **key, t_env	*env_vars);
-int		export(t_env **env, char	*add);
+int		export(t_env **env, char	**add);
 
 /*----------utils----------*/
 void	free_env(t_env *env);
@@ -68,7 +71,7 @@ char	*check_path(char	**path, char	**utils);
 void	check(t_cmd *cmd, char **env);
 
 /*------single_command-----*/
-void	single_cmd(t_cmd *cmd, char **utils, char **env); //temp
+void	single_cmd(t_cmd *cmd, char **env);
 
 /*-----multiple_command----*/
 void	even_child(int i, int in, int out, t_pipe p);

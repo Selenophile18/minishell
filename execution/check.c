@@ -6,7 +6,7 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 22:21:01 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/02/20 09:55:22 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/02/25 18:50:09 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ void	call_builtin(t_env *env_var, char **b_in)
 {
 	if (!ft_strncmp("echo", b_in[0], 0))
 		echo(++b_in);
-	else if (!ft_strncmp("cd", b_in[0], 0))
-		cd(b_in[1]);
+	// else if (!ft_strncmp("cd", b_in[0], 0))
+	// 	cd(b_in[1]);
 	else if (!ft_strncmp("unset", b_in[0], 0))
 		unset(++b_in, env_var);
 	else if (!ft_strncmp("pwd", b_in[0], 0))
@@ -47,21 +47,17 @@ void	call_builtin(t_env *env_var, char **b_in)
 
 void	check(t_cmd *cmd, char **env)
 {
-	char	**cmd_split;
-	char	*temp;
 	int		i;
 
-	cmd_split = ft_split(cmd->cmd, 32);
-	temp = cmd_split[0];
-	cmd_split[0] = ft_strjoin("/", temp);
+	cmd->arg[0] = ft_strjoin("/", cmd->arg[0]);
 	i = 0;
 	if (!cmd->next)
-		single_cmd(cmd, cmd_split, env);
+		single_cmd(cmd, env);
 	else
 	{
 		while (cmd)
 		{
-			if (is_builtin(cmd_split[0]))
+			if (is_builtin(cmd->arg[0]))
 				// call_builtin(env, cmd_split);
 				printf("1");
 			else
