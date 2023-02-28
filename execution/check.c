@@ -6,7 +6,7 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 22:21:01 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/02/25 18:50:09 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/03/01 00:37:06 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,59 +14,55 @@
 
 int	is_builtin(char *cmd)
 {
-	if (!ft_strncmp("echo", cmd, 0))
+	if (!ft_strcmp("echo", cmd))
 		return (1);
-	if (!ft_strncmp("cd", cmd, 0))
+	if (!ft_strcmp("cd", cmd))
 		return (1);
-	if (!ft_strncmp("exit", cmd, 0))
+	if (!ft_strcmp("exit", cmd))
 		return (1);
-	if (!ft_strncmp("unset", cmd, 0))
+	if (!ft_strcmp("unset", cmd))
 		return (1);
-	if (!ft_strncmp("env", cmd, 0))
+	if (!ft_strcmp("env", cmd))
 		return (1);
-	if (!ft_strncmp("pwd", cmd, 0))
+	if (!ft_strcmp("pwd", cmd))
 		return (1);
-	if (!ft_strncmp("export", cmd, 0))
+	if (!ft_strcmp("export", cmd))
 		return (1);
 	return (0);
 }
 
-void	call_builtin(t_env *env_var, char **b_in)
+void	call_builtin(t_env **env_var, t_cmd	*cmd)
 {
-	if (!ft_strncmp("echo", b_in[0], 0))
-		echo(++b_in);
-	// else if (!ft_strncmp("cd", b_in[0], 0))
-	// 	cd(b_in[1]);
-	else if (!ft_strncmp("unset", b_in[0], 0))
-		unset(++b_in, env_var);
-	else if (!ft_strncmp("pwd", b_in[0], 0))
+	if (!ft_strcmp("echo", cmd->cmd[0]))
+		echo(cmd->cmd);
+	else if (!ft_strcmp("cd", cmd->cmd[0]))
+		cd(*cmd, env_var);
+	else if (!ft_strcmp("unset", cmd->cmd[0]))
+		unset(cmd->cmd, *env_var);
+	else if (!ft_strcmp("pwd", cmd->cmd[0]))
 		pwd();
-	else if (!ft_strncmp("env", b_in[0], 0))
-		env(env_var);
+	else if (!ft_strcmp("env", cmd->cmd[0]))
+		env(*env_var);
 }
 
-void	check(t_cmd *cmd, char **env)
+void	check(t_cmd *cmd, t_env **env)
 {
 	int		i;
+	pid_t	id;
 
-	cmd->arg[0] = ft_strjoin("/", cmd->arg[0]);
+	cmd->cmd[0] = ft_strjoin("/", cmd->cmd[0]);
 	i = 0;
 	if (!cmd->next)
-		single_cmd(cmd, env);
-	else
 	{
-		while (cmd)
+		if (is_builtin)
+			call_builtin(env, cmd);
+		else
 		{
-			if (is_builtin(cmd->arg[0]))
-				// call_builtin(env, cmd_split);
-				printf("1");
-			else
-			{
-				// printf("[%p]", cmd->cmd);
-				multiple_cmds(i, cmd, env);
-			}
-			i++;
-			cmd = cmd->next;
+			id = fork();
+			if (!id)
+				single_cmd(cmd, env);
 		}
 	}
+	else
+		multiple_cmds(i, cmd, env);
 }

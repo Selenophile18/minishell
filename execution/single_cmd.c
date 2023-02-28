@@ -6,23 +6,23 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 23:14:54 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/02/24 23:05:15 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/03/01 00:26:27 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	fd(t_cmd cmd)
+void	fd(int *io)
 {
-	if (cmd.in)
+	if (io[0])
 	{
-		dup2(cmd.in, 0);
-		close(cmd.in);
+		dup2(io[0], 0);
+		close(io[0]);
 	}
-	if (cmd.out != 1)
+	if (io[1] != 1)
 	{
-		dup2(cmd.out, 1);
-		close(cmd.out);
+		dup2(io[1], 1);
+		close(io[1]);
 	}
 }
 
@@ -55,21 +55,26 @@ char	*check_path(char	**path, char	**utils)
 	return (temp);
 }
 
-void	single_cmd(t_cmd *cmd, char **env)
+void	single_cmd(t_cmd *cmd, t_env **env)
 {
 	char	**path;
 	char	*temp;
-	int		i;
+	int		io[2];
 
-	path = ft_split(find_path(env), ':');
-	i = 0;
+	io[0] = set_in(*cmd);
+	if (io[0] == -1)
+	{
+		ft_dprintf("%s: No such file or directory", cmd->in);
+		exit (1);
+	}
+	path = ft_split(find_path(**env), ':');
 	if (!path[0])
 	{
-		ft_dprintf("%s: No such file or directory", cmd->arg[0]);
-		return ;
+		ft_dprintf("%s: No such file or directory", cmd->cmd[0]);
+		exit(127);
 	}
-	temp = check_path(path, cmd->arg);
+	temp = check_path(path, cmd->cmd);
 	free_strs(path);
-	fd(*cmd);
-	execve(temp, cmd->arg, env);
+	fd(io);
+	execve(temp, cmd->cmd, ls_to_arr(*env));
 }

@@ -1,4 +1,4 @@
-SRCS	= $(wildcard ./builtins/*.c) $(wildcard ./execution/*.c) main.c
+SRCS	= $(wildcard ./builtins/*.c) $(wildcard ./execution/*.c) $(wildcard ./parsing/*.c)
 
 CC		= cc
 
@@ -8,16 +8,14 @@ NAME	= minishell
 
 MK_FILE	= Makefile
 
-LIBFT	= ./libft/libft.a
+# LIBFT	= ./libft/libft.a
 
 all		: $(NAME)
 
 $(NAME) : $(SRCS) $(MK_FILE)
-		make -C libft
-		$(CC) $(CFLAGS) $(SRCS) $(LIBFT) -o $(NAME)
+		$(CC) $(CFLAGS) $(SRCS) -o $(NAME)
 
-clean	:
-		make clean -C libft
+clean	: rm -rf $(NAME)
 
 fclean	: rm -rf $(NAME)
 

@@ -6,11 +6,12 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 17:05:18 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/02/25 18:53:54 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/03/01 00:34:16 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
 // reads from pipe 1 and write to pipe 2
 void	odd_child(int i, int in, int out, t_pipe p)
 {
@@ -80,29 +81,34 @@ int	ft_wait(int *id, int i)
 	return (1);
 }
 
-void	child_process(t_cmd cmd, char **env, int i, t_pipe p)
+void	child_process(t_cmd cmd, t_env **env, int i, t_pipe p)
 {
 	char	**path;
 	char	*temp;
-	// int		j;
+	int		io[2];
 
-	// printf("%s %d\n", cmd.cmd, i);
+	// HANDLE MULTIPLE IN FILES
+	io[0] = set_in(cmd);
+	if (io[0] == -1)
+	{
+		ft_dprintf("%s: No such file or directory", cmd.in);
+		exit(1);
+	}
 	cmd_checker(p, cmd, i);
-	path = ft_split(find_path(env), ':');
-	// temp = ft_strjoin("/", cmd.arg[0]);
+	path = ft_split(find_path(**env), ':');
 	if (!path[0])
 	{
-		ft_dprintf("%s: No such file or directory", cmd.arg[0]);
-		return ;
+		ft_dprintf("%s: No such file or directory", cmd.cmd[0]);
+		exit(127);
 	}
-	temp = check_path(path, cmd.arg);
+	temp = check_path(path, cmd.cmd);
 	free_strs(path);
-	execve(temp, cmd.arg, env);
+	execve(temp, cmd.cmd, ls_to_arr(*env));
 }
 
-void	multiple_cmds(int count, t_cmd *cmd, char **env)
+void	multiple_cmds(int count, t_cmd *cmd, t_env **env)
 {
-	int		id[count];
+	pid_t	id[count];
 	t_pipe	p;
 	int		i;
 
@@ -111,10 +117,15 @@ void	multiple_cmds(int count, t_cmd *cmd, char **env)
 	pipe(p.p2);
 	while (cmd && i < count)
 	{
-		id[i] = fork();
-		if (id[i] == 0)
-			child_process(*cmd, env, i, p);
-		i++;
+		if (is_builtin)
+			call_builtin(env, cmd);
+		else
+		{
+			id[i] = fork();
+			if (!id[i])
+				child_process(*cmd, env, i, p);
+			i++;
+		}
 		cmd = cmd->next;
 	}
 	close(p.p1[0]);

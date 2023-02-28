@@ -6,27 +6,27 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/12 19:21:49 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/02/17 21:22:23 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/02/28 21:29:04 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-// char	*find_path(t_env	env)
-// {
-// 	char	*path;
-// 	int		i;
+char	*find_path(t_env	env)
+{
+	char	*path;
+	int		i;
 
-// 	i = 0;
-// 	while (env.key)
-// 	{
-// 		path = ft_strnstr(env.key, "PATH=", 5);
-// 		if (path)
-// 			return (env.value);
-// 		i++;
-// 	}
-// 	return (0);
-// }
+	i = 0;
+	while (env.key)
+	{
+		path = ft_strnstr(env.key, "PATH=", 5);
+		if (path)
+			return (env.value);
+		i++;
+	}
+	return (0);
+}
 
 void	ft_dprintf(char *format, char *str)
 {
@@ -40,21 +40,21 @@ void	ft_dprintf(char *format, char *str)
 	close(temp);
 }
 
-char	*find_path(char	**env)
-{
-	char	*path;
-	int		i;
+// char	*find_path(char	**env)
+// {
+// 	char	*path;
+// 	int		i;
 
-	i = 0;
-	while (env[i])
-	{
-		path = ft_strnstr(env[i], "PATH=", 5);
-		if (path)
-			return (path + 5);
-		i++;
-	}
-	return (0);
-}
+// 	i = 0;
+// 	while (env[i])
+// 	{
+// 		path = ft_strnstr(env[i], "PATH=", 5);
+// 		if (path)
+// 			return (path + 5);
+// 		i++;
+// 	}
+// 	return (0);
+// }
 
 void	free_env(t_env *env)
 {

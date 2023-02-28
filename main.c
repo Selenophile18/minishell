@@ -6,11 +6,11 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 15:10:09 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/02/25 18:47:11 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/02/27 22:40:16 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 #include <fcntl.h>
 
 int	main(int ac, char **av, char **env)
