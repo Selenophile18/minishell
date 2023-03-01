@@ -6,30 +6,30 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/12 18:19:09 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/02/28 20:33:50 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/03/01 19:00:03 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	set_pwds(t_env **env, char	*temp)
+void	set_pwds(t_env *env, char	*temp)
 {
 	t_env	*ev;
 
-	ev = *env;
+	ev = env;
 	while (ev)
 	{
-		if (!ft_strncmp(ev->key, "PWD", 0))
+		if (!ft_strcmp(ev->key, "PWD"))
 		{
 			ev->value = getcwd(0, 0);
 			break ;
 		}
 		ev = ev->next;
 	}
-	ev = *env;
+	ev = env;
 	while (ev)
 	{
-		if (!ft_strncmp(ev->key, "OLDPWD", 0))
+		if (!ft_strcmp(ev->key, "OLDPWD"))
 		{
 			ev->value = temp;
 			break ;
@@ -38,15 +38,15 @@ void	set_pwds(t_env **env, char	*temp)
 	}
 }
 
-char	*get_home(t_cmd cmd, t_env **env)
+char	*get_home(t_cmd cmd, t_env *env)
 {
 	t_env	*ev;
 	char	*path;
 
-	ev = *env;
+	ev = env;
 	while (ev)
 	{
-		if (!ft_strncmp(ev->key, "HOME", 0))
+		if (!ft_strcmp(ev->key, "HOME"))
 		{
 			path = ev->value;
 			return (path);
@@ -58,15 +58,15 @@ char	*get_home(t_cmd cmd, t_env **env)
 	return (0);
 }
 
-char	*get_oldpwd(t_cmd cmd, t_env **env)
+char	*get_oldpwd(t_cmd cmd, t_env *env)
 {
 	t_env	*ev;
 	char	*path;
 
-	ev = *env;
+	ev = env;
 	while (ev)
 	{
-		if (!ft_strncmp(ev->key, "OLDPWD", 0))
+		if (!ft_strcmp(ev->key, "OLDPWD"))
 		{
 			path = ev->value;
 			return (path);
@@ -78,7 +78,7 @@ char	*get_oldpwd(t_cmd cmd, t_env **env)
 	return (0);
 }
 
-int	cd(t_cmd cmd, t_env **env)
+int	cd(t_cmd cmd, t_env *env)
 {
 	int		r;
 	char	*temp;
@@ -88,7 +88,7 @@ int	cd(t_cmd cmd, t_env **env)
 	path = cmd.cmd[1];
 	if (!cmd.cmd[1])
 		path = get_home(cmd, env);
-	if (!ft_strncmp(cmd.cmd[1], "-", 0))
+	else if (!ft_strcmp(cmd.cmd[1], "-"))
 		path = get_oldpwd(cmd, env);
 	if (!path)
 		return (1);

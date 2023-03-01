@@ -6,7 +6,7 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 17:05:18 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/03/01 00:34:16 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/03/01 21:57:35 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ int	ft_wait(int *id, int i)
 	return (1);
 }
 
-void	child_process(t_cmd cmd, t_env **env, int i, t_pipe p)
+void	child_process(t_cmd cmd, t_env *env, int i, t_pipe p)
 {
 	char	**path;
 	char	*temp;
@@ -89,13 +89,9 @@ void	child_process(t_cmd cmd, t_env **env, int i, t_pipe p)
 
 	// HANDLE MULTIPLE IN FILES
 	io[0] = set_in(cmd);
-	if (io[0] == -1)
-	{
-		ft_dprintf("%s: No such file or directory", cmd.in);
-		exit(1);
-	}
-	cmd_checker(p, cmd, i);
-	path = ft_split(find_path(**env), ':');
+	io[1] = set_out(cmd);
+	cmd_checker(p, cmd, io, i);
+	path = ft_split(find_path(env), ':');
 	if (!path[0])
 	{
 		ft_dprintf("%s: No such file or directory", cmd.cmd[0]);
@@ -103,39 +99,42 @@ void	child_process(t_cmd cmd, t_env **env, int i, t_pipe p)
 	}
 	temp = check_path(path, cmd.cmd);
 	free_strs(path);
-	execve(temp, cmd.cmd, ls_to_arr(*env));
+	execve(temp, cmd.cmd, ls_to_arr(env));
 }
 
-void	multiple_cmds(int count, t_cmd *cmd, t_env **env)
+void	multiple_cmds(int count, t_cmd *cmd, t_env *env)
 {
 	pid_t	id[count];
 	t_pipe	p;
 	int		i;
+	int cmdsize;
 
 	i = 0;
+	cmdsize = ft_cmdsize(cmd);
 	pipe(p.p1);
 	pipe(p.p2);
 	while (cmd && i < count)
 	{
-		if (is_builtin)
-			call_builtin(env, cmd);
-		else
+		id[i] = fork();
+		if (!id[i])
 		{
-			id[i] = fork();
-			if (!id[i])
+			if (is_builtin(cmd->cmd[0]))
+			{
+				call_builtin(env, cmd);
+				exit(0);
+			}
+			else
 				child_process(*cmd, env, i, p);
-			i++;
 		}
+		i++;
 		cmd = cmd->next;
 	}
+	// printf("{%d\n}", i);
 	close(p.p1[0]);
 	close(p.p1[1]);
 	close(p.p2[0]);
 	close(p.p2[1]);
-	ft_wait(id, i);
+	ft_wait(id, cmdsize - 1);
 	while (--i >= 0)
-	{
-		dprintf(2, "here id %d, i %d\n", id[i], i);
 		waitpid(id[i], NULL, 0);
-	}
 }

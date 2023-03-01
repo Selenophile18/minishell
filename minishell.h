@@ -6,7 +6,7 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 11:29:33 by ebelkhei          #+#    #+#             */
-/*   Updated: 2023/02/28 23:58:18 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/03/01 16:47:32 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,15 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <limits.h>
-# include <fcntl.h>
 # include "exec.h"
 # include <readline/readline.h>
 # include <readline/history.h>
+
+// OPERATORS MACROS
+# define OUT 0
+# define APPEND 1
+# define IN 2
+# define HERE_DOC 3
 
 # define SPACE 1
 # define PIPE 2
@@ -52,24 +57,23 @@
 
 // typedef struct t_token
 // {
-// 	char			*token;
+// 	char			*content;
 // 	int				type;
 // 	struct t_token	*next;
 // }	t_token;
 
-// typedef struct t_out
+// typedef struct t_redirection
 // {
-// 	char			*out;
-// 	struct t_out	*next;
-// }	t_out;
+// 	char					*redirection;
+// 	int						type;
+// 	struct t_redirection	*next;
+// }	t_redirection;
 
 // typedef struct t_cmd
 // {
 // 	char			**cmd;
-// 	char			*in;
-// 	t_out			*out;
-// 	char			*append;
-// 	char			*here_doc;
+// 	t_redirection	*in;
+// 	t_redirection	*out;
 // 	int				pipe;
 // 	struct t_cmd	*next;
 // }	t_cmd;
@@ -123,7 +127,7 @@ void	clear_cmds(t_cmd **cmds);
 int		token_mode(char *token);
 int		is_separator(char *line);
 int		is_expansion_separator(int a);
-void	set_operator(t_token *token, char **cmd, t_out **out);
+void	set_operator(t_token *token, t_redirection **redirection, int type);
 void	is_operator(t_token *token, t_cmd *cmd);
 void	initialize_args(t_token *token, t_cmd *cmd);
 void	hyphen_expansion(t_token *token, t_env *env);
@@ -131,8 +135,9 @@ void	ft_free(char *str1, char *str2);
 int		ft_isalnum(int argument);
 void	ft_trim(t_token *tok);
 char	*ft_itoa(int n);
-void	ft_lstadd_back_4(t_out **lst, t_out *new);
-t_out	*ft_lstnew_4(char *out);
+void	ft_lstadd_back_4(t_redirection **lst, t_redirection *new);
+t_redirection	*ft_lstnew_4(char *out, int type);
+void	ft_lstclear_2(t_redirection **lst);
 void	*ft_calloc(size_t	n, size_t size);
 char	*ft_strnstr(const char	*big, const char	*lil, size_t	len);
 // int		ft_lstsize(t_token *lst);

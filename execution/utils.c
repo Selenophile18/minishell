@@ -6,24 +6,22 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/12 19:21:49 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/02/28 21:29:04 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/03/01 20:22:01 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-char	*find_path(t_env	env)
+char	*find_path(t_env	*env)
 {
 	char	*path;
-	int		i;
 
-	i = 0;
-	while (env.key)
+	while (env)
 	{
-		path = ft_strnstr(env.key, "PATH=", 5);
+		path = ft_strnstr(env->key, "PATH", 4);
 		if (path)
-			return (env.value);
-		i++;
+			return (env->value);
+		env = env->next;
 	}
 	return (0);
 }
@@ -68,8 +66,11 @@ void	free_strs(char **str)
 	int	i;
 
 	i = 0;
-	while (str[i])
-		free(str[i++]);
+	while (str && str[i])
+	{
+		free(str[i]);
+		i++;
+	}
 	free(str);
 }
 
@@ -87,13 +88,14 @@ char	**ls_to_arr(t_env *env)
 		i++;
 		temp = temp->next;
 	}
-	env_var = (char **)ft_calloc(sizeof(char *), i);
+	env_var = (char **)ft_calloc(sizeof(char *), i + 1);
 	temp = env;
 	i = 0;
 	while (temp)
 	{
-		hold = ft_strjoin(temp->key, "=");
-		env_var[i++] = ft_strjoin(hold, temp->value);
+		hold = ft_strjoin(ft_strdup(temp->key), "=");
+		env_var[i] = ft_strjoin(hold, temp->value);
+		i++;
 		temp = temp->next;
 	}
 	return (env_var);

@@ -5,67 +5,49 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/15 15:10:09 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/02/27 22:40:16 by hhattaki         ###   ########.fr       */
+/*   Created: 2023/02/15 11:32:23 by ebelkhei          #+#    #+#             */
+/*   Updated: 2023/03/01 20:29:19 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
-#include <fcntl.h>
+#include "minishell.h"
 
-int	main(int ac, char **av, char **env)
+int	main(int argc, char *argv[], char *envp[])
 {
-	t_cmd	*d;
-	t_cmd	*c;
-	t_cmd	*b;
-	t_cmd	*h;
-	// t_cmd   *h5;
-	char *cmd2[]= {"cat",0};
-	char *cmd1[]= {"cat",0};
-	char *cmd3[] = {"cat", 0};
-	char *cmd4[] = {"ls", 0};
-	// char *cmd5[] = {"ls", 0};
+	char	*line;
+	t_token	*tokens;
+	t_env	*environment;
+	t_cmd	*cmds;
 
-	(void)ac;
-	(void)av;
-	// // (void)av;
-	// // (void)env;
-	c = (t_cmd *)malloc(sizeof(t_cmd));
-	b = (t_cmd *)malloc(sizeof(t_cmd));
-	d = (t_cmd *)malloc(sizeof(t_cmd));
-	h = (t_cmd *)malloc(sizeof(t_cmd));
-	// h5 = (t_cmd *)malloc(sizeof(t_cmd));
-	d->in = 0;
-	d->out = -2;
-	d->arg = cmd1;
-	d->next = c;
-	c->out = -2;
-	c->arg = cmd2;
-	c->in = -2;
-	c->next = b;
-	b->arg = cmd3;
-	b->in = -2;
-	b->out = -2;
-	b->next = h;
-	h->arg = cmd4;
-	h->in = open("out1", O_RDONLY);;
-	h->out = 1;
-	h->next = 0;
-	// h5->arg = cmd5;
-	// h5->in = -2;
-	// h5->out = 1;
-	// h5->next = 0;
-	
-	
-	// // check(d, env);
-	// // printf("%d\n", i);
-	// // dup2(i, 1);
-	// // printf("test");
-	// // check(&d, env);
-	// multiple_cmds(ac - 1, d, env);
-	// system("leaks minishell");
-	multiple_cmds(5, d, env);
-	// export(env, av);
-	dprintf(2,"\nminishell>");
-	while(1);
+	(void)argc;
+	(void)argv;
+	environment = NULL;
+	g_global_data.exit_status = 0;
+	if (!parse_env(envp, &environment))
+		write(2, "Invalid environment\n", 21);
+	while (1)
+	{
+		tokens = NULL;
+		cmds = NULL;
+		line = readline(RED "minishell$ " RESET);
+		if (!line)
+			exit(0); // exit with the last exit status $? and not 0
+		add_history(line);
+		if (tokenize(line, &tokens))
+		{
+			if (check_syntax_errors(tokens))
+			{
+				expansion(tokens, environment, &tokens);
+				del_spaces(tokens, &tokens);
+				// print_data(tokens);
+				parse_cmds(&cmds, &tokens);
+				check(cmds, environment);
+				// print_cmd(cmds);
+				clear_cmds(&cmds);
+			}
+			else
+				ft_lstclear(&tokens);
+		}
+		free(line);
+	}
 }
