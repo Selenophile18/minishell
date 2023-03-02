@@ -6,7 +6,7 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 11:29:33 by ebelkhei          #+#    #+#             */
-/*   Updated: 2023/03/01 16:47:32 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/03/02 18:50:57 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@
 # define SINGLE 5
 # define HYPHEN 6
 # define WORD 7
+# define LEAKS system("leaks minishell");
 
 # define RED   "\x1B[31m"
 # define GRN   "\x1B[32m"

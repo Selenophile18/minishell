@@ -6,7 +6,7 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/12 18:19:09 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/03/01 19:00:03 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/03/02 21:46:22 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,17 @@
 void	set_pwds(t_env *env, char	*temp)
 {
 	t_env	*ev;
+	char	*cwd;
 
 	ev = env;
+	cwd = getcwd(0, 0);
 	while (ev)
 	{
 		if (!ft_strcmp(ev->key, "PWD"))
 		{
-			ev->value = getcwd(0, 0);
+			// dprintf(2, "%p\n", ev->value);
+			free (ev->value);
+			ev->value = cwd;
 			break ;
 		}
 		ev = ev->next;
@@ -31,6 +35,8 @@ void	set_pwds(t_env *env, char	*temp)
 	{
 		if (!ft_strcmp(ev->key, "OLDPWD"))
 		{
+			// dprintf(2, "%p\n", ev->value);
+			free (ev->value);
 			ev->value = temp;
 			break ;
 		}
@@ -54,7 +60,7 @@ char	*get_home(t_cmd cmd, t_env *env)
 		ev = ev->next;
 	}
 	if (!ev)
-		ft_dprintf("%s: HOME not set", cmd.cmd[0]);
+		ft_dprintf("%s: HOME not set\n", cmd.cmd[0]);
 	return (0);
 }
 
@@ -74,22 +80,25 @@ char	*get_oldpwd(t_cmd cmd, t_env *env)
 		ev = ev->next;
 	}
 	if (!ev)
-		ft_dprintf("%s: OLDPWD not set", cmd.cmd[0]);
+		ft_dprintf("%s: OLDPWD not set\n", cmd.cmd[0]);
 	return (0);
 }
 
 int	cd(t_cmd cmd, t_env *env)
 {
 	int		r;
-	char	*temp;
 	char	*path;
+	char	*cwd;
 
-	temp = ft_strdup(getcwd(0, 0));
+	cwd = getcwd(0, 0);
 	path = cmd.cmd[1];
 	if (!cmd.cmd[1])
 		path = get_home(cmd, env);
 	else if (!ft_strcmp(cmd.cmd[1], "-"))
+	{
+		
 		path = get_oldpwd(cmd, env);
+	}
 	if (!path)
 		return (1);
 	r = chdir(path);
@@ -99,7 +108,6 @@ int	cd(t_cmd cmd, t_env *env)
 			perror(cmd.cmd[1]);
 		return (1);
 	}
-	set_pwds(env, temp);
-	free (temp);
+	set_pwds(env, cwd);
 	return (0);
 }

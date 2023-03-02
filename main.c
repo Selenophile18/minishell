@@ -6,7 +6,7 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 11:32:23 by ebelkhei          #+#    #+#             */
-/*   Updated: 2023/03/01 20:29:19 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/03/02 21:40:43 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,9 @@ int	main(int argc, char *argv[], char *envp[])
 				del_spaces(tokens, &tokens);
 				// print_data(tokens);
 				parse_cmds(&cmds, &tokens);
-				check(cmds, environment);
+		// printf("{%s}\n", cmds->cmd[1]);
 				// print_cmd(cmds);
+				check(cmds, environment);
 				clear_cmds(&cmds);
 			}
 			else

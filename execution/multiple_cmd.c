@@ -6,7 +6,7 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 17:05:18 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/03/01 21:57:35 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/03/02 22:52:52 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,10 +71,14 @@ void	even_child(int i, int in, int out, t_pipe p)
 	close(p.p1[1]);
 }
 
-int	ft_wait(int *id, int i)
+int	ft_wait(int *id, int i, t_pipe *p)
 {
 	int	status;
 
+	close(p->p1[0]);
+	close(p->p1[1]);
+	close(p->p2[0]);
+	close(p->p2[1]);
 	waitpid(id[i], &status, 0);
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
@@ -94,10 +98,13 @@ void	child_process(t_cmd cmd, t_env *env, int i, t_pipe p)
 	path = ft_split(find_path(env), ':');
 	if (!path[0])
 	{
-		ft_dprintf("%s: No such file or directory", cmd.cmd[0]);
+		ft_dprintf("%s: No such file or directory\n", cmd.cmd[0]);
 		exit(127);
 	}
-	temp = check_path(path, cmd.cmd);
+	if (cmd.cmd)
+		temp = check_path(path, cmd.cmd);
+	else
+		temp = 0;
 	free_strs(path);
 	execve(temp, cmd.cmd, ls_to_arr(env));
 }
@@ -118,7 +125,7 @@ void	multiple_cmds(int count, t_cmd *cmd, t_env *env)
 		id[i] = fork();
 		if (!id[i])
 		{
-			if (is_builtin(cmd->cmd[0]))
+			if (cmd->cmd && is_builtin(cmd->cmd[0]))
 			{
 				call_builtin(env, cmd);
 				exit(0);
@@ -126,15 +133,11 @@ void	multiple_cmds(int count, t_cmd *cmd, t_env *env)
 			else
 				child_process(*cmd, env, i, p);
 		}
+		check_pipe(&p, i);
 		i++;
 		cmd = cmd->next;
 	}
-	// printf("{%d\n}", i);
-	close(p.p1[0]);
-	close(p.p1[1]);
-	close(p.p2[0]);
-	close(p.p2[1]);
-	ft_wait(id, cmdsize - 1);
+	ft_wait(id, cmdsize - 1, &p);
 	while (--i >= 0)
 		waitpid(id[i], NULL, 0);
 }

@@ -6,7 +6,7 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 23:14:54 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/03/01 22:06:16 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/03/02 22:26:27 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,9 @@ char	*check_path(char	**path, char	**utils)
 	i = 0;
 	if (!access(utils[0], F_OK && X_OK))
 		return (ft_strdup(utils[0]));
-		
-	if (utils[0][0] != '.')
+	if (utils[0] && utils[0][0] != '.')
 		c = ft_strjoin(ft_strdup("/"), utils[0]);
-	else 
+	else
 		c = ft_strdup(utils[0]);
 	while (path[i])
 	{
@@ -50,7 +49,7 @@ char	*check_path(char	**path, char	**utils)
 	}
 	if (!path[i])
 	{
-		ft_dprintf("%s: Command not found\n", utils[0]);
+		ft_dprintf("%s: command not found\n", utils[0]);
 		exit (127);
 	}
 	return (temp);
@@ -69,7 +68,7 @@ void	single_cmd(t_cmd *cmd, t_env *env)
 	path = ft_split(find_path(env), ':');
 	if (!path)
 	{
-		ft_dprintf("%s: No such file or directory", cmd->cmd[0]);
+		ft_dprintf("%s: No such file or directory\n", cmd->cmd[0]);
 		exit(127);
 	}
 	temp = check_path(path, cmd->cmd);

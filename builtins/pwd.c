@@ -6,7 +6,7 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/14 18:17:45 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/02/14 18:18:23 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/03/02 19:44:42 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,11 @@
 
 int	pwd(void)
 {
-	printf("%s\n", getcwd(NULL, 0));
+	char	*s;
+
+	s = getcwd(NULL, 0);
+	if (s)
+		printf("%s\n", s);
+	free (s);
 	return (0);
 }

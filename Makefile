@@ -2,7 +2,7 @@ SRCS	= $(wildcard ./builtins/*.c) main.c $(wildcard ./execution/*.c) $(wildcard 
 
 CC		= cc
 
-CFLAGS	= -Wall -Wextra -Werror -lreadline -fsanitize=address -g3
+CFLAGS	= -Wall -Wextra -Werror -lreadline 
 
 NAME	= minishell
 

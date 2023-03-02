@@ -6,7 +6,7 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/10 15:05:31 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/03/01 21:54:30 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/03/02 23:16:25 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,14 +78,13 @@ int		env(t_env *envp);
 int		cd(t_cmd cmd, t_env*env);
 int		echo(char **av);
 void	unset(char **key, t_env	*env_vars);
-int		export(t_env **env, char	**add);
+int		export(t_env *env, char	**add);
 void	call_builtin(t_env *env_var, t_cmd	*cmd);
 int		is_builtin(char *cmd);
 
 /*----------utils----------*/
 void	free_env(t_env *env);
 void	free_strs(char **str);
-// char	*find_path(t_env	env);
 char	*find_path(t_env	*env);
 void	ft_dprintf(char *format, char *str);
 char	**ls_to_arr(t_env *env);
@@ -93,6 +92,7 @@ char	*check_path(char	**path, char	**utils);
 int		set_in(t_cmd cmd);
 int		set_out(t_cmd cmd);
 int		herdoc(char *del);
+void	check_pipe(t_pipe *p, int i);
 
 /*---------checking--------*/
 void	check(t_cmd *cmd, t_env *env);
@@ -106,6 +106,5 @@ void	odd_child(int i, int in, int out, t_pipe p);
 void	cmd_checker(t_pipe p, t_cmd cmd, int *io, int i);
 void	multiple_cmds(int count, t_cmd *cmd, t_env *env);
 int		ft_cmdsize(t_cmd *lst);
-
 
 #endif

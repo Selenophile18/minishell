@@ -6,7 +6,7 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/12 19:21:49 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/03/01 20:22:01 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/03/02 16:42:53 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,8 @@ char	**ls_to_arr(t_env *env)
 	while (temp)
 	{
 		hold = ft_strjoin(ft_strdup(temp->key), "=");
-		env_var[i] = ft_strjoin(hold, temp->value);
+		env_var[i] = ft_strjoin(ft_strdup(hold), temp->value);
+		free (hold);
 		i++;
 		temp = temp->next;
 	}
