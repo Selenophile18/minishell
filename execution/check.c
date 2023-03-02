@@ -6,7 +6,7 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 22:21:01 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/03/01 21:54:44 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/03/02 15:46:46 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,12 @@ void	check(t_cmd *cmd, t_env *env)
 	int		i;
 	pid_t	id;
 
+	i = 0;
+	// while (cmd->cmd[i])
+	// {
+	// 	printf("%s", cmd->cmd[i]);
+	// 	i++;
+	// }
 	i = ft_cmdsize(cmd);
 	if (!cmd->next)
 	{

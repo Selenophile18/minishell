@@ -6,7 +6,7 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/14 18:16:40 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/03/01 20:54:43 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/03/02 15:48:43 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,11 @@ int	echo(char **av)
 	i = 0;
 	if (!av[1][0])
 		printf("\n");
-	dprintf(2, "no print %p and %s]",av,av[1]);
+	while (av[i])
+	{
+		printf("%p\n", av[i]);
+		i++;
+	}
 	while (av[1] && av[1][0] && av[1][i] && av[1][0] == '-')
 	{
 		i++;
