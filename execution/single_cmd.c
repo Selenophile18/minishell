@@ -6,7 +6,7 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 23:14:54 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/03/02 22:26:27 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/03/09 13:45:43 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,20 +26,13 @@ void	fd(int *io)
 	}
 }
 
-char	*check_path(char	**path, char	**utils)
+char	*get_path(char **path, char **utils, char *c)
 {
 	int		i;
 	char	*temp;
-	char	*c;
 
 	i = 0;
-	if (!access(utils[0], F_OK && X_OK))
-		return (ft_strdup(utils[0]));
-	if (utils[0] && utils[0][0] != '.')
-		c = ft_strjoin(ft_strdup("/"), utils[0]);
-	else
-		c = ft_strdup(utils[0]);
-	while (path[i])
+	while (path[i] && ft_strcmp(utils[0], "."))
 	{
 		temp = ft_strjoin(ft_strdup(path[i]), c);
 		if (!access(temp, F_OK && X_OK))
@@ -47,12 +40,57 @@ char	*check_path(char	**path, char	**utils)
 		free (temp);
 		i++;
 	}
-	if (!path[i])
+	if (!path[i] || !ft_strlen(utils[0]) | !ft_strcmp(utils[0], "."))
 	{
 		ft_dprintf("%s: command not found\n", utils[0]);
-		exit (127);
+		exit(127);
 	}
 	return (temp);
+}
+
+char	*check_path(char	**path, char	**utils)
+{
+	char	*temp;
+	char	*c;
+
+	if (!utils)
+		return (0);
+	if (ft_strcmp(utils[0], ".") && my_strchr(utils[0], '/'))
+	{
+		if (!access(utils[0], F_OK) && !access(utils[0], X_OK))
+			return (ft_strdup(utils[0]));
+		else if (!access(utils[0], F_OK))
+		{
+			ft_dprintf("%s: Permission denied\n", utils[0]);
+			exit(126);
+		}
+	}
+	if (utils[0] && utils[0][0] != '.')
+		c = ft_strjoin(ft_strdup("/"), utils[0]);
+	else
+		c = ft_strdup(utils[0]);
+	temp = get_path(path, utils, c);
+	return (temp);
+}
+
+void	check_if_dir(char	*name)
+{
+	DIR		*dir;
+
+	dir = opendir(name);
+	if (dir)
+	{
+		ft_dprintf("%s: is a directory\n", name);
+		g_global_data.exit_status = 126;
+		closedir(dir);
+		exit(g_global_data.exit_status);
+	}
+	if (access(name, F_OK))
+	{
+		ft_dprintf("%s: No such file or directory\n", name);
+		g_global_data.exit_status = 127;
+		exit(g_global_data.exit_status);
+	}
 }
 
 void	single_cmd(t_cmd *cmd, t_env *env)
@@ -60,13 +98,20 @@ void	single_cmd(t_cmd *cmd, t_env *env)
 	char	**path;
 	char	*temp;
 	int		io[2];
+	int		her;
 
-	io[0] = set_in(*cmd);
-	if (!cmd->cmd)
-		exit(0);
+	if (cmd->cmd && my_strchr(cmd->cmd[0], '/'))
+		check_if_dir(cmd->cmd[0]);
+	her = find_heredoc(cmd, env);
+	io[0] = set_in(0, *cmd, her);
+	file_error(io[0], *cmd);
 	io[1] = set_out(*cmd);
+	if (io[1] == -1)
+		exit (1);
+	if (!cmd->cmd[0])
+		exit(0);
 	path = ft_split(find_path(env), ':');
-	if (!path)
+	if (!path && !my_strchr(cmd->cmd[0], '/'))
 	{
 		ft_dprintf("%s: No such file or directory\n", cmd->cmd[0]);
 		exit(127);

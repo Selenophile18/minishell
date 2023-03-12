@@ -6,7 +6,7 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 22:21:01 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/03/02 23:20:25 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/03/08 14:19:34 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,48 +57,71 @@ int	is_builtin(char *cmd)
 	return (0);
 }
 
-void	call_builtin(t_env *env_var, t_cmd	*cmd)
+int	call_builtin(t_env **env_var, t_cmd	*cmd)
 {
+	int	ex;
+
+	ex = 0;
 	if (!ft_strcmp("echo", cmd->cmd[0]))
-		echo(cmd->cmd);
+		ex = echo(cmd->cmd);
 	else if (!ft_strcmp("cd", cmd->cmd[0]))
-		cd(*cmd, env_var);
+		ex = cd(*cmd, *env_var);
 	else if (!ft_strcmp("unset", cmd->cmd[0]))
-		unset(cmd->cmd, env_var);
+		ex = unset(cmd->cmd, env_var);
 	else if (!ft_strcmp("pwd", cmd->cmd[0]))
-		pwd();
+		ex = pwd();
 	else if (!ft_strcmp("env", cmd->cmd[0]))
-		env(env_var);
+		ex = env(*env_var);
 	else if (!ft_strcmp("export", cmd->cmd[0]))
-		export(env_var, cmd->cmd);	
+		ex = export(env_var, cmd->cmd);
+	else if (!ft_strcmp("exit", cmd->cmd[0]))
+		ex = ft_exit(cmd->cmd);
+	return (ex);
 }
 
-void	check(t_cmd *cmd, t_env *env)
+int	open_in_out(int *io, t_cmd cmd)
 {
-	int		i;
-	pid_t	id;
-
-	i = 0;
-	// while (cmd->cmd[i])
-	// {
-	// 	printf("%s", cmd->cmd[i]);
-	// 	i++;
-	// }
-	i = ft_cmdsize(cmd);
-	if (!cmd->next)
+	io[0] = set_in(0, cmd, 0);
+	if (io[0] == -1)
 	{
-		// printf("here%s\n", cmd->cmd[1]);
+		g_global_data.exit_status = 1;
+		return (-1);
+	}
+	io[1] = set_out(cmd);
+	if (io[1] == -1)
+	{
+		g_global_data.exit_status = 1;
+		return (-1);
+	}
+	if (io[1] != 1)
+	{
+		dup2(io[1], 1);
+		close(io[1]);
+	}
+	return (1);
+}
+
+void	check(t_cmd *cmd, t_env **env)
+{
+	int		temp;
+	int		io[2];
+
+	temp = dup(STDOUT_FILENO);
+	if (cmd && !cmd->next)
+	{
 		if (cmd->cmd && cmd->cmd[0] && is_builtin(cmd->cmd[0]))
-			call_builtin(env, cmd);
-		else
 		{
-			// cmd->cmd[0] = join("/", cmd->cmd[0]);
-			id = fork();
-			if (!id)
-				single_cmd(cmd, env);
-			waitpid(id, 0, 0);
+			if (open_in_out(io, *cmd) == -1)
+				return ;
+			g_global_data.exit_status = call_builtin(env, cmd);
+			dup2(temp, 1);
+			close(temp);
+			if (io[0])
+				close(io[0]);
 		}
+		else
+			set_for_single_command(cmd, *env);
 	}
 	else
-		multiple_cmds(i, cmd, env);
+		multiple_cmds(ft_cmdsize(cmd), cmd, env);
 }

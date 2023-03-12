@@ -6,34 +6,50 @@
 /*   By: hhattaki <hhattaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/11 21:59:21 by hhattaki          #+#    #+#             */
-/*   Updated: 2023/02/27 21:59:46 by hhattaki         ###   ########.fr       */
+/*   Updated: 2023/03/08 16:54:29 by hhattaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	unset(char **key, t_env	*env_vars)
+void	del(char *key, t_env **hold, t_env *temp, t_env **env_vars)
+{
+	while (*hold)
+	{
+		if (hold && !ft_strcmp((*hold)->key, key))
+		{
+			ft_lstdel_2(temp, *hold, env_vars);
+			break ;
+		}
+		temp = *hold;
+		*hold = (*hold)->next;
+	}		
+}
+
+int	unset(char **key, t_env	**env_vars)
 {
 	t_env	*temp;
 	t_env	*hold;
 	int		i;
+	int		r;
+	int		ex;
 
 	i = 1;
-	hold = env_vars;
+	ex = 0;
+	hold = *env_vars;
 	while (key[i])
 	{
-		while (env_vars)
+		r = is_alphanum(key[i]);
+		if (r != -1)
 		{
-			if (!ft_strncmp(env_vars->next->key, key[i], 0))
-			{
-				temp = env_vars->next;
-				env_vars->next = temp->next;
-				free_env(temp);
-				break ;
-			}
-			env_vars = env_vars->next;
+			ft_dprintf("unset: `%s': not a valid identifier\n", key[i]);
+			ex = 1;
 		}
-		env_vars = hold;
+		temp = 0;
+		if (r == -1)
+			del(key[i], &hold, temp, env_vars);
+		hold = *env_vars;
 		i++;
 	}
+	return (ex);
 }
